@@ -1,14 +1,14 @@
-
-
 import 'package:flutter/material.dart';
+import 'package:instagrocers/Gen/productcard.dart';
 import 'package:instagrocers/Home/Models/categorymodel.dart';
 import 'package:instagrocers/Gen/Textformfield.dart';
 import 'package:instagrocers/Gen/customtext.dart';
+import 'package:instagrocers/Home/Models/product.dart';
 import 'package:instagrocers/Home/Models/retailer.dart';
+import 'package:instagrocers/Home/Views/category.dart';
+import 'package:instagrocers/Home/Views/pdetails.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:instagrocers/Home/Apis/homservice.dart';
-
-
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -18,12 +18,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   final HomeService _homeService = HomeService();
   List<Category> _categories = [];
   List<Retailer> _retailers = [];
+  Map<String, List<Product>> _categoryProducts = {};
+
   bool _isLoadingCategories = true;
   bool _isLoadingRetailers = true;
+  bool _isLoadingProducts = true;
+
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -31,6 +34,7 @@ class _HomeState extends State<Home> {
     super.initState();
     _loadCategories();
     _loadRetailers();
+    _loadProducts();
   }
 
   Future<void> _loadCategories() async {
@@ -46,7 +50,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-
   Future<void> _loadRetailers() async {
     try {
       final retailers = await _homeService.fetchRetailers();
@@ -60,82 +63,185 @@ class _HomeState extends State<Home> {
     }
   }
 
+  Future<void> _loadProducts() async {
+    try {
+      final categories = await _homeService.fetchCategories();
+      final products = await _homeService.fetchProducts();
+
+      Map<String, List<Product>> groupedProducts = {};
+      for (var category in categories) {
+        groupedProducts[category.id] = products
+            .where((product) => product.category.id == category.id)
+            .take(5)
+            .toList();
+      }
+
+      setState(() {
+        _categories = categories;
+        _categoryProducts = groupedProducts;
+         allProducts = products;
+        _isLoadingProducts = false;
+      });
+    } catch (e) {
+      print("Error fetching products: $e");
+      setState(() => _isLoadingProducts = false);
+    }
+  }
+
+  Future<void> _refreshData() async {
+    setState(() {
+      _isLoadingCategories = true;
+      _isLoadingRetailers = true;
+      _isLoadingProducts = true;
+    });
+
+    await Future.wait([_loadCategories(), _loadRetailers(), _loadProducts()]);
+
+    setState(() {
+      _isLoadingCategories = false;
+      _isLoadingRetailers = false;
+      _isLoadingProducts = false;
+    });
+  }
+
+ List<Product> allProducts = [];
+
+  List<Product> _getProductsForCategory(Category category) {
+  return allProducts.where((product) => product.category.id == category.id).toList();
+}
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    body: Padding(
-      padding: const EdgeInsets.only(top: 20),
-      child: Column(
-        children: [
-          ContainerTextFormField(
-            label: "",
-            hintText: "Search products and stores",
-            controller: _searchController,
-            prefixIcon: const Icon(Icons.search, color: Colors.grey),
-          ),
-      
-          const SizedBox(height: 20),
-      
-          // Categories Section
-          SizedBox(
-            height: 120,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _isLoadingCategories ? 5 : _categories.length,
-              itemBuilder: (_, index) {
-                return _isLoadingCategories
-                    ? Skeletonizer(enabled: true, child: _buildSkeletonCategory())
-                    : GestureDetector(
-                        onTap: () {
-                          print(_categories[index].id);
-                        },
-                        child: _buildCategory(_categories[index]));
-              },
-            ),
-          ),
-      
-          const SizedBox(height: 20),
-      
-          // Stores Near You Section
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: RefreshIndicator(
+          onRefresh: _refreshData, // Function to refresh data
+          child: ListView(
+            padding: const EdgeInsets.all(10),
             children: [
-              CustomText(
-                text: "Stores near you",
-                fontWeight: FontWeight.w500,
-                fontSize: 18,
+              // Search Bar
+              ContainerTextFormField(
+                label: "",
+                hintText: "Search products and stores",
+                controller: _searchController,
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
               ),
-              CircleAvatar(
-                child: Icon(Icons.arrow_forward),
-              )
+
+              const SizedBox(height: 20),
+
+              // Categories Section
+SizedBox(
+  height: 120,
+  child: ListView.builder(
+    scrollDirection: Axis.horizontal,
+    itemCount: _isLoadingCategories ? 5 : _categories.length,
+    itemBuilder: (_, index) {
+      if (_isLoadingCategories) {
+        return Skeletonizer(enabled: true, child: _buildSkeletonCategory());
+      }
+
+      final category = _categories[index];
+      final products = _getProductsForCategory(category); // Fetch category products
+
+      return GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CategoryPage(category: category, products: products),
+            ),
+          );
+        },
+        child: _buildCategory(category),
+      );
+    },
+  ),
+),
+
+
+              // Retailers Section
+              SizedBox(
+                height: 120,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _isLoadingRetailers ? 5 : _retailers.length,
+                  itemBuilder: (_, index) {
+                    return _isLoadingRetailers
+                        ? Skeletonizer(
+                            enabled: true, child: _buildSkeletonRetailer())
+                        : GestureDetector(
+                            onTap: () {
+                              print(_retailers[index].id);
+                            },
+                            child: _buildRetailer(_retailers[index]),
+                          );
+                  },
+                ),
+              ),
+
+              if (_isLoadingProducts)
+                Skeletonizer(
+                  enabled: true,
+                  child: Column(
+                    children: List.generate(
+                      3, // Show 3 skeleton loading sections
+                      (index) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Simulated Category Title
+                            Container(
+                              width: 120,
+                              height: 20,
+                              color: Colors.grey[300],
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                            ),
+                            const SizedBox(height: 8),
+
+                            // Simulated Product List
+                            SizedBox(
+                              height:
+                                  200, // Adjust height for the product section
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount:
+                                    4, // Simulating 4 products per category
+                                itemBuilder: (context, _) => Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: Container(
+                                    width: 140, // Simulated product card width
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              else
+                Column(
+                  children: _categories
+                      .map(
+                        (category) => _buildCategorySection(
+                            category, _categoryProducts[category.id] ?? []),
+                      )
+                      .toList(),
+                ),
             ],
           ),
-      
-          const SizedBox(height: 15),
-      
-          // Retailers Section
-          SizedBox(
-            height: 120,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _isLoadingRetailers ? 5 : _retailers.length,
-              itemBuilder: (_, index) {
-                return _isLoadingRetailers
-                    ? Skeletonizer(enabled: true, child: _buildSkeletonRetailer())
-                    : GestureDetector(
-                        onTap: () {
-                          print(_retailers[index].id);
-                        },
-                        child: _buildRetailer(_retailers[index]));
-              },
-            ),
-          ),
-        ],
+        ),
       ),
-    ),
-  );
+    );
   }
 
   Widget _buildCategory(Category category) {
@@ -149,10 +255,6 @@ class _HomeState extends State<Home> {
               width: 60,
               height: 60,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => const CircleAvatar(
-                radius: 30,
-                child: Icon(Icons.error, color: Colors.red),
-              ),
             ),
           ),
           const SizedBox(height: 5),
@@ -163,6 +265,81 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCategorySection(Category category, List<Product> products) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Category Title
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                category.name,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              GestureDetector(
+                onTap: () {
+                  print(category.name);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CategoryPage(category: category, products: products),
+                  ),
+                );
+                
+                },
+                child: const Text(
+                  "See all",
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 10),
+
+        SizedBox(
+          height: 230,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              final product = products[index];
+              return Padding(
+                padding:
+                    EdgeInsets.only(right: 10, left: 10, top: 10, bottom: 10),
+                child: ProductCard(
+                  avatarUrl: product.storeLogo,
+                  imageUrl: product.imageUrl,
+                  title: product.name,
+                  rating: product.averageRating,
+                  reviews: product.reviews.length,
+                  price: product.price,
+                  onAddToCart: () {
+                    Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => ProductDetailsPage(product: product),
+  ),
+);
+
+                  }
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -179,43 +356,42 @@ class _HomeState extends State<Home> {
     );
   }
 
-
   Widget _buildRetailer(Retailer retailer) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 8),
-    child: Column(
-      children: [
-        ClipOval(
-          child: Image.network(
-            retailer.logo,
-            width: 60,
-            height: 60,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        children: [
+          ClipOval(
+            child: Image.network(
+              retailer.logo,
+              width: 60,
+              height: 60,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) =>
+                  const SizedBox.shrink(),
+            ),
           ),
-        ),
-        const SizedBox(height: 5),
-        CustomText(
-          text: retailer.storeName,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-      ],
-    ),
-  );
-}
+          const SizedBox(height: 5),
+          CustomText(
+            text: retailer.storeName,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ],
+      ),
+    );
+  }
 
-Widget _buildSkeletonRetailer() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 8),
-    child: Column(
-      children: [
-        const CircleAvatar(radius: 35), // Skeletonized circle
-        const SizedBox(height: 5),
-        Container(width: 60, height: 10, color: Colors.grey),
-      ],
-    ),
-  );
-}
-
+  Widget _buildSkeletonRetailer() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        children: [
+          const CircleAvatar(radius: 35), // Skeletonized circle
+          const SizedBox(height: 5),
+          Container(width: 60, height: 10, color: Colors.grey),
+        ],
+      ),
+    );
+  }
 }

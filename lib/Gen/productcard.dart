@@ -33,7 +33,7 @@ class ProductCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 6,
+            blurRadius: 1,
             spreadRadius: 2,
           ),
         ],
@@ -47,7 +47,7 @@ class ProductCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
                   imageUrl,
-                  height: 120,
+                  height: 110,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
@@ -84,13 +84,16 @@ class ProductCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            title,
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+Text(
+  title,
+  style: GoogleFonts.poppins(
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+  ),
+  maxLines: 1, 
+  overflow: TextOverflow.ellipsis, 
+),
+
           const SizedBox(height: 4),
           Row(
             children: [
