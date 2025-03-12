@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:instagrocers/Cart/Model/cartmodel.dart';
 import 'package:instagrocers/Cart/Widgets/cartcard.dart';
 import 'package:instagrocers/Cart/services/cartservice.dart';
+import 'package:instagrocers/Checkout/View/checkout.dart';
 import 'package:instagrocers/Gen/custombtn.dart';
-
 
 class CartPage extends StatefulWidget {
   @override
@@ -52,7 +52,8 @@ class _CartPageState extends State<CartPage> {
                   // Cart Items (Inside a ListView with shrinkWrap)
                   ListView.builder(
                     shrinkWrap: true, // Prevents infinite height error
-                    physics: const NeverScrollableScrollPhysics(), // Disables inner scrolling
+                    physics:
+                        const NeverScrollableScrollPhysics(), // Disables inner scrolling
                     itemCount: cart.length,
                     itemBuilder: (context, index) {
                       final item = cart[index];
@@ -60,7 +61,8 @@ class _CartPageState extends State<CartPage> {
                       return CartItemCard(
                         item: item,
                         onRemove: () => _removeItem(item.id),
-                        onIncrease: () => _updateQuantity(item.id, item.quantity + 1),
+                        onIncrease: () =>
+                            _updateQuantity(item.id, item.quantity + 1),
                         onDecrease: () {
                           if (item.quantity > 1) {
                             _updateQuantity(item.id, item.quantity - 1);
@@ -90,11 +92,15 @@ class _CartPageState extends State<CartPage> {
                           const Divider(),
                           _buildListTile("Send as Gift", Icons.card_giftcard),
                           const Divider(),
-_buildPriceRow("Delivery", "£6.00", Icons.local_shipping, isBold: false),
-const Divider(),
-_buildPriceRow("Total", "£${(total + 6.00).toStringAsFixed(2)}", Icons.receipt_long, isBold: false),
-
-                          
+                          _buildPriceRow(
+                              "Delivery", "£6.00", Icons.local_shipping,
+                              isBold: false),
+                          const Divider(),
+                          _buildPriceRow(
+                              "Total",
+                              "£${(total + 6.00).toStringAsFixed(2)}",
+                              Icons.receipt_long,
+                              isBold: false),
                         ],
                       ),
                     ),
@@ -103,50 +109,63 @@ _buildPriceRow("Total", "£${(total + 6.00).toStringAsFixed(2)}", Icons.receipt_
                   const SizedBox(height: 16),
 
                   // Checkout Button
-                  const Padding(
-                    padding:  EdgeInsets.all(8.0),
+
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: CustomButton(
                       color: Colors.orange,
                       text: "Go to Checkout",
+                      onPressed: () {
+Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CheckoutPage(cart: cart, total: total),
+        ),
+      );
+                      },
                     ),
                   ),
-
-                
                 ],
               ),
             ),
     );
   }
 
-  // Helper widget to create list tile for "Add Note" & "Send as Gift"
   Widget _buildListTile(String title, IconData icon) {
     return ListTile(
       leading: Icon(icon, color: Colors.black54),
       title: Text(title, style: const TextStyle(fontSize: 16)),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      trailing:
+          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
       onTap: () {},
     );
   }
 
   // Helper widget for price rows (Delivery & Total)
-Widget _buildPriceRow(String label, String amount, IconData icon, {bool isBold = false}) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: Colors.black54, size: 20), // Icon added here
-            const SizedBox(width: 8), // Spacing between icon and text
-            Text(label, style: TextStyle(fontSize: 16, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
-          ],
-        ),
-        Text(amount, style: TextStyle(fontSize: 16, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
-      ],
-    ),
-  );
+  Widget _buildPriceRow(String label, String amount, IconData icon,
+      {bool isBold = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: Colors.black54, size: 20), // Icon added here
+              const SizedBox(width: 8), // Spacing between icon and text
+              Text(label,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight:
+                          isBold ? FontWeight.bold : FontWeight.normal)),
+            ],
+          ),
+          Text(amount,
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
+        ],
+      ),
+    );
+  }
 }
-
-}
-
