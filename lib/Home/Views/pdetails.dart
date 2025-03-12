@@ -18,6 +18,9 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
+
+
+
   int quantity = 1;
   List<Product> similarItems = [];
   List<Product> frequentlyBought = [];

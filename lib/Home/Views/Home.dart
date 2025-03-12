@@ -7,6 +7,7 @@ import 'package:instagrocers/Home/Models/product.dart';
 import 'package:instagrocers/Home/Models/retailer.dart';
 import 'package:instagrocers/Home/Views/category.dart';
 import 'package:instagrocers/Home/Views/pdetails.dart';
+import 'package:instagrocers/Stores/storehome.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:instagrocers/Home/Apis/homservice.dart';
 
@@ -79,7 +80,7 @@ class _HomeState extends State<Home> {
       setState(() {
         _categories = categories;
         _categoryProducts = groupedProducts;
-         allProducts = products;
+        allProducts = products;
         _isLoadingProducts = false;
       });
     } catch (e) {
@@ -104,12 +105,13 @@ class _HomeState extends State<Home> {
     });
   }
 
- List<Product> allProducts = [];
+  List<Product> allProducts = [];
 
   List<Product> _getProductsForCategory(Category category) {
-  return allProducts.where((product) => product.category.id == category.id).toList();
-}
-
+    return allProducts
+        .where((product) => product.category.id == category.id)
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,34 +134,35 @@ class _HomeState extends State<Home> {
               const SizedBox(height: 20),
 
               // Categories Section
-SizedBox(
-  height: 120,
-  child: ListView.builder(
-    scrollDirection: Axis.horizontal,
-    itemCount: _isLoadingCategories ? 5 : _categories.length,
-    itemBuilder: (_, index) {
-      if (_isLoadingCategories) {
-        return Skeletonizer(enabled: true, child: _buildSkeletonCategory());
-      }
+              SizedBox(
+                height: 120,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _isLoadingCategories ? 5 : _categories.length,
+                  itemBuilder: (_, index) {
+                    if (_isLoadingCategories) {
+                      return Skeletonizer(
+                          enabled: true, child: _buildSkeletonCategory());
+                    }
 
-      final category = _categories[index];
-      final products = _getProductsForCategory(category); // Fetch category products
+                    final category = _categories[index];
+                    final products = _getProductsForCategory(category);
 
-      return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CategoryPage(category: category, products: products),
-            ),
-          );
-        },
-        child: _buildCategory(category),
-      );
-    },
-  ),
-),
-
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CategoryPage(
+                                category: category, products: products),
+                          ),
+                        );
+                      },
+                      child: _buildCategory(category),
+                    );
+                  },
+                ),
+              ),
 
               // Retailers Section
               SizedBox(
@@ -173,7 +176,13 @@ SizedBox(
                             enabled: true, child: _buildSkeletonRetailer())
                         : GestureDetector(
                             onTap: () {
-                              print(_retailers[index].id);
+                              String storeId = _retailers[index].id;
+ Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Storehome(storeId: storeId),
+      ),
+    );
                             },
                             child: _buildRetailer(_retailers[index]),
                           );
@@ -286,13 +295,13 @@ SizedBox(
               GestureDetector(
                 onTap: () {
                   print(category.name);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CategoryPage(category: category, products: products),
-                  ),
-                );
-                
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CategoryPage(category: category, products: products),
+                    ),
+                  );
                 },
                 child: const Text(
                   "See all",
@@ -319,22 +328,21 @@ SizedBox(
                 padding:
                     EdgeInsets.only(right: 10, left: 10, top: 10, bottom: 10),
                 child: ProductCard(
-                  avatarUrl: product.storeLogo,
-                  imageUrl: product.imageUrl,
-                  title: product.name,
-                  rating: product.averageRating,
-                  reviews: product.reviews.length,
-                  price: product.price,
-                  onAddToCart: () {
-                    Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => ProductDetailsPage(product: product),
-  ),
-);
-
-                  }
-                ),
+                    avatarUrl: product.storeLogo,
+                    imageUrl: product.imageUrl,
+                    title: product.name,
+                    rating: product.averageRating,
+                    reviews: product.reviews.length,
+                    price: product.price,
+                    onAddToCart: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProductDetailsPage(product: product),
+                        ),
+                      );
+                    }),
               );
             },
           ),

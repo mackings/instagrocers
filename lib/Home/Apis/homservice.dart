@@ -7,6 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
 class HomeService {
   Future<List<Category>> fetchCategories() async {
     final prefs = await SharedPreferences.getInstance();
@@ -71,6 +75,29 @@ class HomeService {
       return data.map((json) => Product.fromJson(json)).toList();
     } else {
       throw Exception("Failed to load products");
+    }
+  }
+
+
+  Future<List<Product>> fetchStoreProducts(String storeId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString("accessToken");
+
+    if (token == null) throw Exception("No access token found");
+
+    final response = await http.get(
+      Uri.parse("https://instagrocers-backend.onrender.com/products/store/$storeId"),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.map((json) => Product.fromJson(json)).toList();
+    } else {
+      throw Exception("Failed to load store products");
     }
   }
 }
