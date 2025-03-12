@@ -8,6 +8,7 @@ import 'package:instagrocers/Home/Models/product.dart';
 import 'package:instagrocers/Home/Models/retailer.dart';
 import 'package:instagrocers/Home/Views/category.dart';
 import 'package:instagrocers/Home/Views/pdetails.dart';
+import 'package:instagrocers/Stores/storedashboard.dart';
 import 'package:instagrocers/Stores/storehome.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:instagrocers/Home/Apis/homservice.dart';
@@ -129,7 +130,14 @@ class _HomeState extends State<Home> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomText(text: "Lagos NG"),
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Storedashboard()));
+                      },
+                      child: CustomText(text: "Lagos NG")),
                   GestureDetector(
                       onTap: () {
                         Navigator.push(

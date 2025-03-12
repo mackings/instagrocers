@@ -4,6 +4,7 @@ import 'package:instagrocers/Gen/Textformfield.dart';
 import 'package:instagrocers/Gen/custombtn.dart';
 import 'package:instagrocers/Gen/customtext.dart';
 import 'package:instagrocers/Home/Views/Home.dart';
+import 'package:instagrocers/main.dart';
 
 
 
@@ -27,7 +28,7 @@ class _SigninScreenState extends State<SigninScreen> {
     setState(() => isLoading = false);
 
     if (user != null) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Login Successful! Welcome, ${user.name}")),
       );

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:instagrocers/Auth/Views/signin.dart';
-import 'package:instagrocers/Gen/Otpfield.dart';
+import 'package:instagrocers/Cart/View/cart.dart';
+import 'package:instagrocers/Home/Views/Home.dart';
+import 'package:instagrocers/Stores/storedashboard.dart';
+
 
 
 void main() {
@@ -24,121 +27,69 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
 
 
-  final String title;
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _MainScreenState createState() => _MainScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0;
 
-  TextEditingController email = TextEditingController();
+  final List<Widget> _pages = [
+    const Home(),
+    const Storedashboard(),
+     CartPage(),
+  
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20,right: 20),
-          child: Column(
-            children: <Widget>[
-      
-      //               SizedBox(height: 10,),
-          
-      //               ContainerTextFormField(
-      //                 hintText: "Enter Email", 
-      //                 controller: email,
-      //                 isPassword: true,
-      //                 ),
-      
-      //                 SizedBox(height: 10,),
-          
-      //               CustomButton(
-      //                 isBorderBtn: false,
-      //                 color: Colors.orange,
-      //                 text: "Macs",
-      //               onPressed: (){}
-      //               ),
-      
-      
-      //  Row(
-      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //    children: [
-      //      ProductCard(
-      //       avatarUrl: "https://img.freepik.com/premium-vector/cartoon-illustration-soap-bar-with-words-soap-it_871209-41.jpg?w=360",
-      //       imageUrl: "https://img.freepik.com/premium-vector/cartoon-illustration-soap-bar-with-words-soap-it_871209-41.jpg?w=360",
-      //       title: "Soaps",
-      //       rating: 4.8,
-      //       reviews: 287,
-      //       price: 3.99,
-      //       onAddToCart: () {
-      //         print("Added to cart!");
-      //       },
-      //      ),
-      
-      //      ProductCard(
-      //       avatarUrl: "https://img.freepik.com/premium-vector/cartoon-illustration-soap-bar-with-words-soap-it_871209-41.jpg?w=360",
-      //       imageUrl: "https://img.freepik.com/premium-vector/cartoon-illustration-soap-bar-with-words-soap-it_871209-41.jpg?w=360",
-      //       title: "Soaps",
-      //       rating: 4.8,
-      //       reviews: 287,
-      //       price: 3.99,
-      //       onAddToCart: () {
-      //         print("Added to cart!");
-      //       },
-      //      ),
-      //    ],
-      //  ),
-      
-      // StoreCard(
-      //   onFavoriteTap: (){},
-      //   storeLogoUrl: "https://cached.imagescaler.hbpl.co.uk/resize/scaleWidth/952/cached.offlinehbpl.hbpl.co.uk/news/OMC/AsdaResized-20150223115224441.jpg",
-      //   storeName: "ASDA Superstore",
-      //   deliveryFee: "£0.89",
-      //   deliveryTime: "20 min",
-      //   productCount: "20,000",
-      //   productImageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVBznR6zUP22wMtBvfYr_XEF-FV4-1Si5x2-e-JnFpdV6chTeO4bUsjddFhYULFH2K8_0&usqp=CAU",
-      //   onTap: () {
-      //     print("Store tapped!");
-      //   },
-      // )
-      
-      
-      Expanded(
-        child: OtpVerificationWidget(
-          phoneNumber: "+44 123 456 7890",
-          onResend: () {
-            // Handle Resend OTP
-          },
-          onChangeNumber: () {
-            // Handle Change Number
-          },
-          onVerify: () {
-            // Handle OTP Verification
-          },
-          otpController: TextEditingController(),
-        ),
-      )
-      
-      
-          
-            ],
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.orange,  // Active color
+        unselectedItemColor: Colors.black, // Inactive color
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
           ),
-        ),
-      ),
- 
 
-     
+           BottomNavigationBarItem(
+            icon: Icon(Icons.storefront_outlined),
+            label: 'Store',
+          ),
+
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+          ),
+
+        ],
+      ),
     );
   }
 }
