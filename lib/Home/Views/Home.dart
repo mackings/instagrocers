@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:instagrocers/Cart/View/cart.dart';
 import 'package:instagrocers/Gen/productcard.dart';
 import 'package:instagrocers/Home/Models/categorymodel.dart';
 import 'package:instagrocers/Gen/Textformfield.dart';
@@ -123,6 +124,22 @@ class _HomeState extends State<Home> {
           child: ListView(
             padding: const EdgeInsets.all(10),
             children: [
+              const SizedBox(height: 10),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomText(text: "Lagos NG"),
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CartPage()));
+                      },
+                      child: Icon(Icons.shopping_cart))
+                ],
+              ),
               // Search Bar
               ContainerTextFormField(
                 label: "",
@@ -135,7 +152,7 @@ class _HomeState extends State<Home> {
 
               // Categories Section
               SizedBox(
-                height: 120,
+                height: 110,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: _isLoadingCategories ? 5 : _categories.length,
@@ -166,7 +183,7 @@ class _HomeState extends State<Home> {
 
               // Retailers Section
               SizedBox(
-                height: 120,
+                height: 110,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: _isLoadingRetailers ? 5 : _retailers.length,
@@ -177,12 +194,13 @@ class _HomeState extends State<Home> {
                         : GestureDetector(
                             onTap: () {
                               String storeId = _retailers[index].id;
- Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Storehome(storeId: storeId),
-      ),
-    );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      Storehome(storeId: storeId),
+                                ),
+                              );
                             },
                             child: _buildRetailer(_retailers[index]),
                           );

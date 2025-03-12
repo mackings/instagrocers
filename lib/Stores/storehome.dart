@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:instagrocers/Gen/custombtn.dart';
+import 'package:instagrocers/Gen/customtext.dart';
 import 'package:instagrocers/Home/Apis/homservice.dart';
 import 'package:instagrocers/Home/Models/product.dart';
 import 'package:instagrocers/Stores/widgets/store.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-
-
-
 
 class Storehome extends StatefulWidget {
   final String storeId;
@@ -32,7 +31,8 @@ class _StorehomeState extends State<Storehome> {
 
   Future<void> fetchStoreProducts() async {
     try {
-      List<Product> products = await _homeService.fetchStoreProducts(widget.storeId);
+      List<Product> products =
+          await _homeService.fetchStoreProducts(widget.storeId);
       if (products.isNotEmpty) {
         storeName = products.first.retailer.storeName;
         storeLogo = products.first.storeLogo;
@@ -66,7 +66,34 @@ class _StorehomeState extends State<Storehome> {
                         storeName: storeName,
                         storeLogo: storeLogo,
                       )
-                    : const Center(child: Text("No products available")),
+                    : Padding(
+                        padding: EdgeInsets.only(left: 20, right: 20),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 250,
+                            ),
+                            Icon(
+                              Icons.hourglass_empty,
+                              size: 150,
+                            ),
+                            Center(
+                                child: CustomText(text: "No Product Listed")),
+                            SizedBox(
+                              height: 25,
+                            ),
+                            CustomButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              color: Colors.orange,
+                              isBorderBtn: true,
+                              borderColor: Colors.orange,
+                              text: "Try another store",
+                            )
+                          ],
+                        ),
+                      ),
           ],
         ),
       ),

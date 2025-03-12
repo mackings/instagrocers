@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:instagrocers/Cart/Model/cartmodel.dart';
+import 'package:instagrocers/Cart/services/cartservice.dart';
 import 'package:instagrocers/Gen/custombtn.dart';
 import 'package:instagrocers/Gen/productcard.dart';
 import 'package:instagrocers/Home/Apis/homservice.dart';
@@ -62,14 +64,33 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.green.shade700,
-      bottomNavigationBar: const BottomAppBar(
-        elevation: 0,
-        color: Colors.white,
-        child: CustomButton(
-          color: Colors.orange,
-          text: "Add to cart",
-        ),
-      ),
+bottomNavigationBar: BottomAppBar(
+  elevation: 0,
+  color: Colors.white,
+  child: ElevatedButton(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.orange,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      padding: const EdgeInsets.symmetric(vertical: 15),
+    ),
+    onPressed: () async {
+      final cartItem = CartItem(
+        id: widget.product.id.toString(),
+        name: widget.product.name,
+        imageUrl: widget.product.imageUrl,
+        price: widget.product.price,
+        quantity: quantity,
+      );
+
+      await CartService.addToCart(cartItem);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Added to Cart")),
+      );
+    },
+    child: const Text("Add to Cart", style: TextStyle(color: Colors.white)),
+  ),
+),
+
       body: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -257,7 +278,7 @@ Widget _buildSection(String title, List<Product> items) {
                 reviews: 287,
                 price: item.price,
                 onAddToCart: () {
-                  // Navigate to the selected product's details page
+                
                   Navigator.push(
                     context,
                     MaterialPageRoute(
