@@ -78,8 +78,8 @@ class _SearchState extends State<Search> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              const SizedBox(height: 19),
-              // Search Input Field
+              const SizedBox(height: 39),
+              
 Container(
   decoration: BoxDecoration(
     color: Colors.white,
@@ -114,7 +114,11 @@ Container(
               _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : _storeGroupedResults.isEmpty
-                      ? const Center(child: Text("No results found"))
+                      ? const Column(
+                        children: [
+                           Center(child: Text("Search a product")),
+                        ],
+                      )
                       : ListView.builder(
                           controller: _scrollController,
                           shrinkWrap:
@@ -132,6 +136,7 @@ Container(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 // Store Info
+                                
                                 GestureDetector(
                                   onTap: () {
                                     String storeId = products.first.retailer.id;

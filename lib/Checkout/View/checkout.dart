@@ -1,12 +1,88 @@
 import 'package:flutter/material.dart';
 import 'package:instagrocers/Cart/Model/cartmodel.dart';
 import 'package:instagrocers/Checkout/widgets/details.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+
+
 
 class CheckoutPage extends StatelessWidget {
   final List<CartItem> cart;
   final double total;
 
   CheckoutPage({required this.cart, required this.total});
+
+
+  // Future<void> _makePayment(BuildContext context) async {
+  //   try {
+  //     // Fetch payment intent from backend
+  //     final paymentIntent = await _createPaymentIntent();
+  //     if (paymentIntent == null) return;
+
+  //     // Initialize Stripe Payment Sheet
+  //     await Stripe.instance.initPaymentSheet(
+  //       paymentSheetParameters: SetupPaymentSheetParameters(
+  //         paymentIntentClientSecret: paymentIntent['client_secret'],
+  //         merchantDisplayName: 'Instagrocers',
+  //       ),
+  //     );
+
+  //     // Show Payment Sheet
+  //     await Stripe.instance.presentPaymentSheet();
+
+  //     // Payment Success Message
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Payment Successful!')),
+  //     );
+  //   } catch (e) {
+  //     print('Payment Error: $e');
+
+  //     // Payment Failure Message
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Payment Failed: $e')),
+  //     );
+  //   }
+  // }
+
+  /// 🔹 **Fetch Payment Intent from API**
+
+
+
+  Future<Map<String, dynamic>?> _createPaymentIntent() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString("accessToken"); // Get token
+
+      if (token == null) {
+        print('Error: Missing auth token');
+        return null;
+      }
+
+      final response = await http.post(
+        Uri.parse('https://instagrocers-backend.onrender.com/create-payment-intent'),
+        headers: {
+          'Authorization': 'Bearer $token', // Attach Bearer Token
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'amount': ((total + 6.00) * 100).toInt(), // Convert to cents
+          'currency': 'usd',
+          'paymentMethod': 'Credit Card', // Optional
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        print('Error: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('API Error: $e');
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +95,6 @@ class CheckoutPage extends StatelessWidget {
           children: [
             UserDetailsWidget(),
             const SizedBox(height: 16),
-
-            // Order Summary
             const Text(
               "Order Summary",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -55,9 +129,8 @@ class CheckoutPage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  // Implement checkout logic
-                },
+                 onPressed: () {},
+               // onPressed: () => _makePayment(context), // Call Stripe Payment
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -77,7 +150,7 @@ class CheckoutPage extends StatelessWidget {
     );
   }
 
-  // Widget to display each cart item
+  // 🛒 Display each cart item
   Widget _buildCartItem(CartItem item) {
     return ListTile(
       leading: Image.network(item.imageUrl, width: 40, height: 40),
@@ -87,7 +160,7 @@ class CheckoutPage extends StatelessWidget {
     );
   }
 
-  // Price Row with Icon
+  // 💲 Display Price Row
   Widget _buildPriceRow(IconData icon, String label, String amount, {bool isBold = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

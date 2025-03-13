@@ -164,7 +164,7 @@ class StoreSection extends StatelessWidget {
           ],
         ),
 
-        // Floating Search Bar
+        // Floating Search Bar 
         Positioned(
           top: 230,
           left: 16,
@@ -198,30 +198,39 @@ class StoreSection extends StatelessWidget {
                 ],
               ),
               child: GestureDetector(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Search()));
-                },
-                child: TextField(
-                  //controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: "Search products and stores",
-                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide
-                          .none, // Remove the default border to avoid overlap
-                    ),
-                    filled: true,
-                    fillColor: Colors
-                        .white, // Ensure the TextField background matches the container
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 15,
-                        horizontal: 10), // Optional: Adjust padding
-                  ),
-                  // onChanged: _performSearch,
-                ),
-              ),
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Search()),
+    );
+  },
+  child: Container(
+    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.3),
+          spreadRadius: 2,
+          blurRadius: 5,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    ),
+    child: Row(
+      children: [
+        const Icon(Icons.search, color: Colors.grey),
+        const SizedBox(width: 10),
+        Text(
+          "Search products and stores",
+          style: TextStyle(color: Colors.grey[600], fontSize: 16),
+        ),
+      ],
+    ),
+  ),
+),
+
             ),
           ),
         ),

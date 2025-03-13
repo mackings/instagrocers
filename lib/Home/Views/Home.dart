@@ -8,6 +8,7 @@ import 'package:instagrocers/Home/Models/product.dart';
 import 'package:instagrocers/Home/Models/retailer.dart';
 import 'package:instagrocers/Home/Views/category.dart';
 import 'package:instagrocers/Home/Views/pdetails.dart';
+import 'package:instagrocers/Search/Views/search.dart';
 import 'package:instagrocers/Stores/storedashboard.dart';
 import 'package:instagrocers/Stores/storehome.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -150,36 +151,41 @@ class _HomeState extends State<Home> {
               ),
 
               const SizedBox(height: 15),
-              // Search Bar
-Container(
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(18), // Matches the TextField's border radius
-    boxShadow: [
-      BoxShadow(
-        color: Colors.grey.withOpacity(0.3), // Shadow color with opacity
-        spreadRadius: 2, // How far the shadow spreads
-        blurRadius: 5, // How blurry the shadow is
-        offset: const Offset(0, 3), // Shadow position (x, y)
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: _searchController,
-    decoration: InputDecoration(
-      hintText: "Search products and stores",
-      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide.none, // Remove the default border to avoid overlap
-      ),
-      filled: true,
-      fillColor: Colors.white, // Ensure the TextField background matches the container
-      contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10), // Optional: Adjust padding
+
+GestureDetector(
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Search()),
+    );
+  },
+  child: Container(
+    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.3),
+          spreadRadius: 2,
+          blurRadius: 5,
+          offset: const Offset(0, 3),
+        ),
+      ],
     ),
-    //onChanged: _performSearch,
+    child: Row(
+      children: [
+        const Icon(Icons.search, color: Colors.grey),
+        const SizedBox(width: 10),
+        Text(
+          "Search products and stores",
+          style: TextStyle(color: Colors.grey[600], fontSize: 16),
+        ),
+      ],
+    ),
   ),
 ),
+
 
               const SizedBox(height: 20),
 

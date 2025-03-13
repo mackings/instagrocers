@@ -8,6 +8,7 @@ import 'package:instagrocers/Stores/storedashboard.dart';
 
 
 void main() {
+ // Stripe.publishableKey = 'pk_test_51OUdVOEsTmh0E2XGkvRprQeMwqkOIp8G5JOdiL7aom9QEdA9McbFNcXQEJlo85DZ2SKrC9Iox5iNphnBxf5JQywa00De8wERGy';
   runApp(const MyApp());
 }
 
