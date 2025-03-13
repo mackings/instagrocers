@@ -27,10 +27,6 @@ class _StoredashboardState extends State<Storedashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Stores"),
-        backgroundColor: Colors.green,
-      ),
       body: FutureBuilder<List<Retailer>>(
         future: _retailersFuture,
         builder: (context, snapshot) {
@@ -40,15 +36,18 @@ class _StoredashboardState extends State<Storedashboard> {
               padding: const EdgeInsets.all(16),
               itemCount: 3, // Show 3 skeletons while loading
               itemBuilder: (context, index) {
-                return Skeletonizer(
-                  enabled: true,
-                  child: StoreCard(
-                    storeName: "Loading...",
-                    logoUrl: "",
-                    deliveryFee: "£0.99",
-                    deliveryTime: "20 min",
-                    productCount: "20,000",
-                    index: index,
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Skeletonizer(
+                    enabled: true,
+                    child: StoreCard(
+                      storeName: "Loading...",
+                      logoUrl: "",
+                      deliveryFee: "£0.99",
+                      deliveryTime: "20 min",
+                      productCount: "20,000",
+                      index: index,
+                    ),
                   ),
                 );
               },

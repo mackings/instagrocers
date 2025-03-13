@@ -28,10 +28,10 @@ class _CategoryPageState extends State<CategoryPage> {
         padding: const EdgeInsets.all(10),
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // 2 items per row
-            crossAxisSpacing: 20, // Reduced spacing for better fit
+            crossAxisCount: 2,
+            crossAxisSpacing: 20, 
             mainAxisSpacing: 10,
-            childAspectRatio: 0.82, // Adjusted for medium size
+            childAspectRatio: 0.79, // Adjusted for medium size
           ),
           itemCount: widget.products.length,
           itemBuilder: (context, index) {

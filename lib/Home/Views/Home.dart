@@ -148,13 +148,38 @@ class _HomeState extends State<Home> {
                       child: Icon(Icons.shopping_cart))
                 ],
               ),
+
+              const SizedBox(height: 15),
               // Search Bar
-              ContainerTextFormField(
-                label: "",
-                hintText: "Search products and stores",
-                controller: _searchController,
-                prefixIcon: const Icon(Icons.search, color: Colors.grey),
-              ),
+Container(
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(18), // Matches the TextField's border radius
+    boxShadow: [
+      BoxShadow(
+        color: Colors.grey.withOpacity(0.3), // Shadow color with opacity
+        spreadRadius: 2, // How far the shadow spreads
+        blurRadius: 5, // How blurry the shadow is
+        offset: const Offset(0, 3), // Shadow position (x, y)
+      ),
+    ],
+  ),
+  child: TextField(
+    controller: _searchController,
+    decoration: InputDecoration(
+      hintText: "Search products and stores",
+      prefixIcon: const Icon(Icons.search, color: Colors.grey),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide.none, // Remove the default border to avoid overlap
+      ),
+      filled: true,
+      fillColor: Colors.white, // Ensure the TextField background matches the container
+      contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10), // Optional: Adjust padding
+    ),
+    //onChanged: _performSearch,
+  ),
+),
 
               const SizedBox(height: 20),
 

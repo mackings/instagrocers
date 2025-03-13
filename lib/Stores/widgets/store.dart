@@ -3,9 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:instagrocers/Gen/productcard.dart';
 import 'package:instagrocers/Home/Models/product.dart';
 import 'package:instagrocers/Home/Views/pdetails.dart';
-
-
-
+import 'package:instagrocers/Search/Views/search.dart';
 
 class StoreSection extends StatelessWidget {
   final String title;
@@ -90,69 +88,71 @@ class StoreSection extends StatelessWidget {
             const SizedBox(height: 60),
 
             // Promo Banner
-Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 16),
-  child: Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Colors.green.shade100,
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Get Same Day Delivery',
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Get Same Day Delivery',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            'On orders above £20',
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.green,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text('Shop Now'),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Dynamically use the first product image
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                          8), // Optional: Adds rounded corners
+                      child: products.isNotEmpty
+                          ? Image.network(
+                              products
+                                  .first.imageUrl, // Use first product's image
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Image.asset('assets/shoppingbag.png',
+                                      width: 80), // Fallback image
+                            )
+                          : Image.asset('assets/shoppingbag.png',
+                              width: 80), // Show placeholder if no products
+                    ),
+                  ],
                 ),
               ),
-              Text(
-                'On orders above £20',
-                style: GoogleFonts.poppins(
-                  fontSize: 12,
-                  color: Colors.grey.shade700,
-                ),
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text('Shop Now'),
-              ),
-            ],
-          ),
-        ),
-        // Dynamically use the first product image
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8), // Optional: Adds rounded corners
-          child: products.isNotEmpty
-              ? Image.network(
-                  products.first.imageUrl, // Use first product's image
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      Image.asset('assets/shoppingbag.png', width: 80), // Fallback image
-                )
-              : Image.asset('assets/shoppingbag.png', width: 80), // Show placeholder if no products
-        ),
-      ],
-    ),
-  ),
-),
-
-
+            ),
 
             const SizedBox(height: 16),
 
@@ -182,12 +182,45 @@ Padding(
                 ),
               ],
             ),
-            child: const TextField(
-              decoration: InputDecoration(
-                hintText: 'Search products and stores',
-                prefixIcon: Icon(Icons.search, color: Colors.grey),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.all(12),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(
+                    18), // Matches the TextField's border radius
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey
+                        .withOpacity(0.3), // Shadow color with opacity
+                    spreadRadius: 2, // How far the shadow spreads
+                    blurRadius: 5, // How blurry the shadow is
+                    offset: const Offset(0, 3), // Shadow position (x, y)
+                  ),
+                ],
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Search()));
+                },
+                child: TextField(
+                  //controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: "Search products and stores",
+                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide
+                          .none, // Remove the default border to avoid overlap
+                    ),
+                    filled: true,
+                    fillColor: Colors
+                        .white, // Ensure the TextField background matches the container
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 15,
+                        horizontal: 10), // Optional: Adjust padding
+                  ),
+                  // onChanged: _performSearch,
+                ),
               ),
             ),
           ),
@@ -247,5 +280,3 @@ Padding(
     );
   }
 }
-
-

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:instagrocers/Auth/Views/signin.dart';
 import 'package:instagrocers/Cart/View/cart.dart';
 import 'package:instagrocers/Home/Views/Home.dart';
+import 'package:instagrocers/Search/Views/search.dart';
 import 'package:instagrocers/Stores/storedashboard.dart';
 
 
@@ -43,6 +44,7 @@ class _MainScreenState extends State<MainScreen> {
     const Home(),
     const Storedashboard(),
      CartPage(),
+     const Search()
   
   ];
 
