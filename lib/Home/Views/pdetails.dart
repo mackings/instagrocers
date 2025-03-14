@@ -7,9 +7,6 @@ import 'package:instagrocers/Gen/productcard.dart';
 import 'package:instagrocers/Home/Apis/homservice.dart';
 import 'package:instagrocers/Home/Models/product.dart';
 
-
-
-
 class ProductDetailsPage extends StatefulWidget {
   final Product product;
 
@@ -20,9 +17,6 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
-
-
-
   int quantity = 1;
   List<Product> similarItems = [];
   List<Product> frequentlyBought = [];
@@ -64,33 +58,36 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.green.shade700,
-bottomNavigationBar: BottomAppBar(
-  elevation: 0,
-  color: Colors.white,
-  child: ElevatedButton(
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.orange,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      padding: const EdgeInsets.symmetric(vertical: 15),
-    ),
-    onPressed: () async {
-      final cartItem = CartItem(
-        id: widget.product.id.toString(),
-        name: widget.product.name,
-        imageUrl: widget.product.imageUrl,
-        price: widget.product.price,
-        quantity: quantity,
-      );
+      bottomNavigationBar: BottomAppBar(
+        elevation: 0,
+        color: Colors.white,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            padding: const EdgeInsets.symmetric(vertical: 15),
+          ),
+          onPressed: () async {
+            final cartItem = CartItem(
+              id: widget.product.id.toString(),
+              name: widget.product.name,
+              imageUrl: widget.product.imageUrl,
+              price: widget.product.price,
+              quantity: quantity,
+            );
 
-      await CartService.addToCart(cartItem);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Added to Cart")),
-      );
-    },
-    child: const Text("Add to Cart", style: TextStyle(color: Colors.white)),
-  ),
-),
+            await CartService.addToCart(cartItem);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Added to Cart")),
+            );
 
+            print(widget.product.id);
+          },
+          child:
+              const Text("Add to Cart", style: TextStyle(color: Colors.white)),
+        ),
+      ),
       body: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -99,10 +96,9 @@ bottomNavigationBar: BottomAppBar(
               children: [
                 const SizedBox(height: 60),
                 Container(
-                  margin:
-                      const EdgeInsets.only(top: 40), 
+                  margin: const EdgeInsets.only(top: 40),
                   padding: const EdgeInsets.all(12),
-                  decoration:const BoxDecoration(
+                  decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
                           topRight: Radius.circular(20),
@@ -169,7 +165,10 @@ bottomNavigationBar: BottomAppBar(
 
                       // Related Products Sections
                       if (isLoading)
-                        const Center(child: CircularProgressIndicator(color: Colors.white,)),
+                        const Center(
+                            child: CircularProgressIndicator(
+                          color: Colors.white,
+                        )),
                       if (!isLoading)
                         _buildSection("Similar Items", similarItems),
                       if (!isLoading)
@@ -249,50 +248,48 @@ bottomNavigationBar: BottomAppBar(
 
   // Product List Sections
 // Product List Sections
-Widget _buildSection(String title, List<Product> items) {
-  if (items.isEmpty) return const SizedBox();
+  Widget _buildSection(String title, List<Product> items) {
+    if (items.isEmpty) return const SizedBox();
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Text(title,
-            style: GoogleFonts.poppins(
-                fontSize: 16, fontWeight: FontWeight.bold)),
-      ),
-      SizedBox(
-        height: 230,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            final item = items[index];
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ProductCard(
-                imageUrl: item.imageUrl,
-                avatarUrl: item.storeLogo,
-                title: item.name,
-                rating: item.averageRating,
-                reviews: 287,
-                price: item.price,
-                onAddToCart: () {
-                
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProductDetailsPage(product: item),
-                    ),
-                  );
-                },
-              ),
-            );
-          },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Text(title,
+              style: GoogleFonts.poppins(
+                  fontSize: 16, fontWeight: FontWeight.bold)),
         ),
-      ),
-    ],
-  );
-}
-
+        SizedBox(
+          height: 230,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ProductCard(
+                  imageUrl: item.imageUrl,
+                  avatarUrl: item.storeLogo,
+                  title: item.name,
+                  rating: item.averageRating,
+                  reviews: 287,
+                  price: item.price,
+                  onAddToCart: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProductDetailsPage(product: item),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
 }

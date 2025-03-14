@@ -8,8 +8,11 @@ import 'package:instagrocers/Stores/storedashboard.dart';
 
 
 void main() {
- // Stripe.publishableKey = 'pk_test_51OUdVOEsTmh0E2XGkvRprQeMwqkOIp8G5JOdiL7aom9QEdA9McbFNcXQEJlo85DZ2SKrC9Iox5iNphnBxf5JQywa00De8wERGy';
-  runApp(const MyApp());
+
+ WidgetsFlutterBinding.ensureInitialized();
+ //Stripe.publishableKey = 'pk_test_51OUdVOEsTmh0E2XGkvRprQeMwqkOIp8G5JOdiL7aom9QEdA9McbFNcXQEJlo85DZ2SKrC9Iox5iNphnBxf5JQywa00De8wERGy';
+ runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {
@@ -20,7 +23,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-  
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
@@ -68,7 +70,8 @@ class _MainScreenState extends State<MainScreen> {
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
         items: const [
-          BottomNavigationBarItem(
+
+          BottomNavigationBarItem( 
             icon: Icon(Icons.home_outlined),
             label: 'Home',
           ),
@@ -82,14 +85,17 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.shopping_cart),
             label: 'Cart',
           ),
+
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
             label: 'Search',
           ),
+
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             label: 'Profile',
           ),
+          
 
         ],
       ),

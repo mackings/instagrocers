@@ -1,87 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:instagrocers/Cart/Model/cartmodel.dart';
+import 'package:instagrocers/Checkout/Api/checkoutservice.dart';
+import 'package:instagrocers/Checkout/View/webview.dart';
 import 'package:instagrocers/Checkout/widgets/details.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
 
-class CheckoutPage extends StatelessWidget {
+
+class CheckoutPage extends StatefulWidget {
   final List<CartItem> cart;
   final double total;
 
   CheckoutPage({required this.cart, required this.total});
 
+  @override
+  State<CheckoutPage> createState() => _CheckoutPageState();
+}
 
-  // Future<void> _makePayment(BuildContext context) async {
-  //   try {
-  //     // Fetch payment intent from backend
-  //     final paymentIntent = await _createPaymentIntent();
-  //     if (paymentIntent == null) return;
+class _CheckoutPageState extends State<CheckoutPage> {
+  Map<String, String> userDetails = {};
+  final CheckoutService _checkoutService = CheckoutService();
 
-  //     // Initialize Stripe Payment Sheet
-  //     await Stripe.instance.initPaymentSheet(
-  //       paymentSheetParameters: SetupPaymentSheetParameters(
-  //         paymentIntentClientSecret: paymentIntent['client_secret'],
-  //         merchantDisplayName: 'Instagrocers',
-  //       ),
-  //     );
+  void _updateUserDetails(Map<String, String> details) {
+    setState(() {
+      userDetails = details;
+    });
+  }
 
-  //     // Show Payment Sheet
-  //     await Stripe.instance.presentPaymentSheet();
-
-  //     // Payment Success Message
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Payment Successful!')),
-  //     );
-  //   } catch (e) {
-  //     print('Payment Error: $e');
-
-  //     // Payment Failure Message
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Payment Failed: $e')),
-  //     );
-  //   }
-  // }
-
-  /// 🔹 **Fetch Payment Intent from API**
-
-
-
-  Future<Map<String, dynamic>?> _createPaymentIntent() async {
+  Future<void> _makePayment(BuildContext context) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final String? token = prefs.getString("accessToken"); // Get token
+      List<Map<String, dynamic>> cartItems = widget.cart.map((item) {
+        return {
+          "productId": item.id,
+          "quantity": item.quantity,
+        };
+      }).toList();
 
-      if (token == null) {
-        print('Error: Missing auth token');
-        return null;
-      }
-
-      final response = await http.post(
-        Uri.parse('https://instagrocers-backend.onrender.com/create-payment-intent'),
-        headers: {
-          'Authorization': 'Bearer $token', // Attach Bearer Token
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'amount': ((total + 6.00) * 100).toInt(), // Convert to cents
-          'currency': 'usd',
-          'paymentMethod': 'Credit Card', // Optional
-        }),
+      String checkoutUrl = await _checkoutService.createCheckoutSession(
+        cartItems: cartItems,
+        userDetails: userDetails,
       );
 
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        print('Error: ${response.body}');
-        return null;
-      }
+      _openWebView(context, checkoutUrl);
     } catch (e) {
-      print('API Error: $e');
-      return null;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Payment failed: $e")),
+      );
     }
+  }
+
+  void _openWebView(BuildContext context, String url) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => InAppWebViewScreen(url: url),
+      ),
+    );
   }
 
   @override
@@ -93,14 +68,13 @@ class CheckoutPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            UserDetailsWidget(),
+            UserDetailsWidget(onDetailsUpdated: _updateUserDetails),
             const SizedBox(height: 16),
             const Text(
               "Order Summary",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -109,28 +83,24 @@ class CheckoutPage extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  ...cart.map((item) => _buildCartItem(item)), // Display Cart Items
+                  ...widget.cart.map((item) => _buildCartItem(item)),
                   const Divider(),
                   _buildPriceRow(Icons.local_shipping, "Delivery", "£6.00"),
                   const Divider(),
                   _buildPriceRow(
                     Icons.shopping_bag,
                     "Total",
-                    "£${(total + 6.00).toStringAsFixed(2)}",
+                    "£${(widget.total + 6.00).toStringAsFixed(2)}",
                     isBold: true,
                   ),
                 ],
               ),
             ),
-
             const SizedBox(height: 24),
-
-            // Checkout Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                 onPressed: () {},
-               // onPressed: () => _makePayment(context), // Call Stripe Payment
+                onPressed: () => _makePayment(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -150,7 +120,6 @@ class CheckoutPage extends StatelessWidget {
     );
   }
 
-  // 🛒 Display each cart item
   Widget _buildCartItem(CartItem item) {
     return ListTile(
       leading: Image.network(item.imageUrl, width: 40, height: 40),
@@ -160,7 +129,6 @@ class CheckoutPage extends StatelessWidget {
     );
   }
 
-  // 💲 Display Price Row
   Widget _buildPriceRow(IconData icon, String label, String amount, {bool isBold = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -186,4 +154,3 @@ class CheckoutPage extends StatelessWidget {
     );
   }
 }
-

@@ -117,6 +117,7 @@ class StoreSection extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 8),
+
                           ElevatedButton(
                             onPressed: () {},
                             style: ElevatedButton.styleFrom(
@@ -128,6 +129,7 @@ class StoreSection extends StatelessWidget {
                             ),
                             child: const Text('Shop Now'),
                           ),
+                          
                         ],
                       ),
                     ),
@@ -165,6 +167,7 @@ class StoreSection extends StatelessWidget {
         ),
 
         // Floating Search Bar 
+        
         Positioned(
           top: 230,
           left: 16,
@@ -237,6 +240,8 @@ class StoreSection extends StatelessWidget {
       ],
     );
   }
+
+
 
   // Section for Displaying Products in a Horizontal List
   Widget _buildSection(String sectionTitle, List<Product> items) {
