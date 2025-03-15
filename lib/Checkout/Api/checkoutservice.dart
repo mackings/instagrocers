@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CheckoutService {
-  Future<String> createCheckoutSession({
+  Future<Map<String, String>> createCheckoutSession({
     required List<Map<String, dynamic>> cartItems,
     required Map<String, String> userDetails,
   }) async {
@@ -33,10 +33,18 @@ class CheckoutService {
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data["url"]; // Return the Stripe checkout URL
+
+final data = json.decode(response.body);
+print("Checkout API Response: $data"); // Debugging
+
+return {
+  "url": data["url"],  // Stripe checkout URL
+  "sessionId": data["sessionId"],  // Payment session ID
+};
+
     } else {
       throw Exception("Failed to create checkout session");
     }
   }
 }
+

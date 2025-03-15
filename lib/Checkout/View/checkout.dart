@@ -21,6 +21,7 @@ class CheckoutPage extends StatefulWidget {
 class _CheckoutPageState extends State<CheckoutPage> {
   Map<String, String> userDetails = {};
   final CheckoutService _checkoutService = CheckoutService();
+  static const double deliveryCost = 6.00;
 
   void _updateUserDetails(Map<String, String> details) {
     setState(() {
@@ -28,36 +29,53 @@ class _CheckoutPageState extends State<CheckoutPage> {
     });
   }
 
-  Future<void> _makePayment(BuildContext context) async {
-    try {
-      List<Map<String, dynamic>> cartItems = widget.cart.map((item) {
-        return {
+Future<void> _makePayment(BuildContext context) async {
+  if (userDetails.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Please fill in your details before proceeding.")),
+    );
+    return;
+  }
+
+  try {
+    List<Map<String, dynamic>> cartItems = widget.cart.map((item) => {
           "productId": item.id,
           "quantity": item.quantity,
-        };
-      }).toList();
+        }).toList();
 
-      String checkoutUrl = await _checkoutService.createCheckoutSession(
-        cartItems: cartItems,
-        userDetails: userDetails,
-      );
+    // Call CheckoutService to create a checkout session
+    Map<String, dynamic> sessionData = await _checkoutService.createCheckoutSession(
+      cartItems: cartItems,
+      userDetails: userDetails,
+    );
 
-      _openWebView(context, checkoutUrl);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Payment failed: $e")),
-      );
+    String checkoutUrl = sessionData["url"] ?? "";
+    String sessionId = sessionData["sessionId"] ?? "";
+
+    if (checkoutUrl.isNotEmpty) {
+      print("Navigating with Session ID: $sessionId"); // Debugging
+      _openWebView(context, checkoutUrl, sessionId);
+    } else {
+      throw Exception("Invalid checkout URL received.");
     }
-  }
-
-  void _openWebView(BuildContext context, String url) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => InAppWebViewScreen(url: url),
-      ),
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Payment failed: $e")),
     );
   }
+}
+
+
+
+void _openWebView(BuildContext context, String url, String sessionId) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => InAppWebViewScreen(url: url, sessionId: sessionId),
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -85,12 +103,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 children: [
                   ...widget.cart.map((item) => _buildCartItem(item)),
                   const Divider(),
-                  _buildPriceRow(Icons.local_shipping, "Delivery", "£6.00"),
+                  _buildPriceRow(Icons.local_shipping, "Delivery", "£$deliveryCost"),
                   const Divider(),
                   _buildPriceRow(
                     Icons.shopping_bag,
                     "Total",
-                    "£${(widget.total + 6.00).toStringAsFixed(2)}",
+                    "£${(widget.total + deliveryCost).toStringAsFixed(2)}",
                     isBold: true,
                   ),
                 ],
@@ -100,7 +118,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => _makePayment(context),
+                onPressed: userDetails.isNotEmpty ? () => _makePayment(context) : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   padding: const EdgeInsets.symmetric(vertical: 16),
