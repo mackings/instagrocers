@@ -18,6 +18,7 @@ class CheckoutPage extends StatefulWidget {
   State<CheckoutPage> createState() => _CheckoutPageState();
 }
 
+
 class _CheckoutPageState extends State<CheckoutPage> {
   Map<String, String> userDetails = {};
   final CheckoutService _checkoutService = CheckoutService();
@@ -28,6 +29,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
       userDetails = details;
     });
   }
+
+
 
 Future<void> _makePayment(BuildContext context) async {
   if (userDetails.isEmpty) {
@@ -92,7 +95,9 @@ void _openWebView(BuildContext context, String url, String sessionId) {
               "Order Summary",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
+
             const SizedBox(height: 8),
+
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -114,7 +119,9 @@ void _openWebView(BuildContext context, String url, String sessionId) {
                 ],
               ),
             ),
+
             const SizedBox(height: 24),
+
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -137,6 +144,8 @@ void _openWebView(BuildContext context, String url, String sessionId) {
       ),
     );
   }
+
+
 
   Widget _buildCartItem(CartItem item) {
     return ListTile(

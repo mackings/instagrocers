@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:instagrocers/Cart/View/cart.dart';
+import 'package:instagrocers/Chat/views/chathome.dart';
 import 'package:instagrocers/Gen/productcard.dart';
 import 'package:instagrocers/Home/Models/categorymodel.dart';
 import 'package:instagrocers/Gen/Textformfield.dart';
@@ -139,7 +140,20 @@ class _HomeState extends State<Home> {
                                 builder: (context) => Storedashboard()));
                       },
                       child: CustomText(text: "Lagos NG")),
-                  GestureDetector(
+                  Row(
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ChatHome()));
+                          },
+                          child: Icon(Icons.android_outlined)),
+
+                          SizedBox(width: 20,),
+
+                    GestureDetector(
                       onTap: () {
                         Navigator.push(
                             context,
@@ -147,6 +161,8 @@ class _HomeState extends State<Home> {
                                 builder: (context) => CartPage()));
                       },
                       child: Icon(Icons.shopping_cart))
+                    ],
+                  )
                 ],
               ),
 

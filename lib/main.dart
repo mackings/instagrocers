@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:instagrocers/Auth/Views/signin.dart';
 import 'package:instagrocers/Cart/View/cart.dart';
 import 'package:instagrocers/Home/Views/Home.dart';
+import 'package:instagrocers/Orders/Views/orderhome.dart';
 import 'package:instagrocers/Search/Views/search.dart';
 import 'package:instagrocers/Stores/storedashboard.dart';
 
@@ -41,13 +42,15 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
     const Home(),
     const Storedashboard(),
      CartPage(),
-     const Search()
+     const Search(),
+     OrderHome()
   
   ];
 
@@ -92,8 +95,8 @@ class _MainScreenState extends State<MainScreen> {
           ),
 
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
+            icon: Icon(Icons.delivery_dining),
+            label: 'Orders',
           ),
           
 
