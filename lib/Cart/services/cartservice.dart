@@ -22,6 +22,13 @@ class CartService {
     return CartItem.decode(cartString);
   }
 
+static Future<int> getCartItemCount() async {
+  List<CartItem> cart = await loadCart(); // Wait for cart to load
+  int totalItems = cart.fold(0, (sum, item) => sum + item.quantity);
+  return totalItems;
+}
+
+
   // Add product to cart
   static Future<void> addToCart(CartItem product) async {
     List<CartItem> cart = await loadCart();

@@ -47,13 +47,7 @@ class _OrderTrackingWidgetState extends State<OrderTrackingWidget> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            spreadRadius: 2,
-          ),
-        ],
+        border: Border.all(width: 0.5)
       ),
       padding: EdgeInsets.all(16),
       child: Column(

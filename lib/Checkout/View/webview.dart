@@ -91,6 +91,9 @@ void initState() {
     );
   }
 
+
+
+
 Future<void> _verifyPayment() async {
   final prefs = await SharedPreferences.getInstance();
   final String? token = prefs.getString("accessToken");
@@ -122,6 +125,7 @@ Future<void> _verifyPayment() async {
     body: jsonEncode({"session_id": widget.sessionId}),
   );
 
+
   Navigator.pop(context); // Close bottom sheet
 
   if (response.statusCode == 200) {
@@ -130,6 +134,8 @@ Future<void> _verifyPayment() async {
       SnackBar(content: Text(data["message"])),
     );
     Navigator.pop(context); // Close WebView screen after successful payment
+    Navigator.pop(context);
+    Navigator.pop(context); 
   } else {
     final errorData = json.decode(response.body);
     ScaffoldMessenger.of(context).showSnackBar(

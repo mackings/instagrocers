@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:instagrocers/Cart/View/cart.dart';
+import 'package:instagrocers/Cart/Widgets/carticon.dart';
 import 'package:instagrocers/Chat/views/chathome.dart';
 import 'package:instagrocers/Gen/productcard.dart';
 import 'package:instagrocers/Home/Models/categorymodel.dart';
@@ -14,6 +15,8 @@ import 'package:instagrocers/Stores/storedashboard.dart';
 import 'package:instagrocers/Stores/storehome.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:instagrocers/Home/Apis/homservice.dart';
+
+
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -153,14 +156,8 @@ class _HomeState extends State<Home> {
 
                           SizedBox(width: 20,),
 
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CartPage()));
-                      },
-                      child: Icon(Icons.shopping_cart))
+
+                     CartIcon(),
                     ],
                   )
                 ],
@@ -349,6 +346,8 @@ GestureDetector(
       ),
     );
   }
+
+
 
   Widget _buildCategorySection(Category category, List<Product> products) {
     return Column(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:instagrocers/Orders/Model/ordermodel.dart';
 import 'package:intl/intl.dart';
+
 
 
 
@@ -13,15 +15,23 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap, 
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: EdgeInsets.all(16),
         margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(width: 0.5, color: Colors.black),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,13 +40,14 @@ class OrderCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                /// **Order Status with Icon**
                 Row(
                   children: [
                     Icon(Icons.receipt_long, color: _getStatusColor(order.orderStatus)),
                     SizedBox(width: 8),
                     Text(
-                      order.orderStatus, // Show API order status
-                      style: TextStyle(
+                      order.orderStatus,
+                      style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: _getStatusColor(order.orderStatus),
@@ -45,17 +56,30 @@ class OrderCard extends StatelessWidget {
                   ],
                 ),
 
-                /// **Total Amount**
-                Chip(
-                  label: Text(
-                    "USD ${order.totalAmount.toStringAsFixed(2)}",
-                    style: TextStyle(color: Colors.white, fontSize: 12),
+                /// **Total Amount Chip**
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.orange, Colors.deepOrange],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  backgroundColor: Colors.orange,
+                  child: Text(
+                    "\$${order.totalAmount.toStringAsFixed(2)}",
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ],
             ),
-            SizedBox(height: 8),
+
+            SizedBox(height: 12),
 
             /// **Estimated Delivery**
             Row(
@@ -64,22 +88,23 @@ class OrderCard extends StatelessWidget {
                 SizedBox(width: 6),
                 Text(
                   "Est: ${DateFormat("MMM dd, hh:mm a").format(order.estimatedDeliveryTime)}",
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[700]),
                 ),
               ],
             ),
 
             SizedBox(height: 12),
 
-            /// **Address**
+            /// **Delivery Address**
             Row(
               children: [
-                Icon(Icons.location_on, color: Colors.orange, size: 18),
+                Icon(Icons.location_on, color: Colors.redAccent, size: 18),
                 SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     order.fullAddress,
-                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                    style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black87),
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -90,15 +115,21 @@ class OrderCard extends StatelessWidget {
 
             /// **View Details Button**
             Align(
-              alignment: Alignment.centerLeft,
-              child: OutlinedButton.icon(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton.icon(
                 onPressed: onTap,
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.orange),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                 // elevation: 2,
                 ),
-                icon: Icon(Icons.info_outline, color: Colors.orange),
-                label: Text("View Details", style: TextStyle(color: Colors.orange)),
+                icon: Icon(Icons.info_outline, size: 18),
+                label: Text(
+                  "View Details",
+                  style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
               ),
             ),
           ],

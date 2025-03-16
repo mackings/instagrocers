@@ -4,6 +4,7 @@ import 'package:instagrocers/Checkout/Api/checkoutservice.dart';
 import 'package:instagrocers/Checkout/View/webview.dart';
 import 'package:instagrocers/Checkout/widgets/details.dart';
 import 'package:http/http.dart' as http;
+import 'package:instagrocers/Gen/customtext.dart';
 
 
 
@@ -83,7 +84,7 @@ void _openWebView(BuildContext context, String url, String sessionId) {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Checkout")),
+      appBar: AppBar(title: CustomText(text: "Checkout")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
